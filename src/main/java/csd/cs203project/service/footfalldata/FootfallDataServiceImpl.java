@@ -40,15 +40,17 @@ public class FootfallDataServiceImpl implements FootfallDataService {
      * 2. the list of footfall data for a year
      * @return
      */
+    @Override
     public String getJsonResponse () {
         JSONObject jsonObject = new JSONObject();
 
         LastUpdateDate lastUpdateDate = lastUpdateDateRepository.findById(1L).orElse(null);
+        List<FootfallData> footfallDataList = listFootfallData();
+        
         jsonObject.put("isChanged", lastUpdateDate.isChanged());
         jsonObject.put("lastUpdated", lastUpdateDate.getDataLastUpdated());
-        jsonObject.put("list", listFootfallData());
-        //.subList(48, 60)
-        jsonObject.put("averages", calculateAverage());
+        jsonObject.put("list", footfallDataList);
+        jsonObject.put("averages", calculateAverage(footfallDataList.subList(55, 60)));
 
         return jsonObject.toString();
     }
@@ -58,6 +60,7 @@ public class FootfallDataServiceImpl implements FootfallDataService {
      *
      * Else clear database and reload the database with updated data
      */
+    @Override
     public void reloadFootfallData () {
         System.out.println("I AM EXECUTED???");
         String dateInDb = lastUpdateDateRepository.findById(1L).map(date -> date.getDataLastUpdated()).orElse(null);
@@ -161,8 +164,7 @@ public class FootfallDataServiceImpl implements FootfallDataService {
         return null;
     }
 
-    public List<Double> calculateAverage() {
-        List<FootfallData> data = listFootfallData().subList(55, 60);
+    public List<Double> calculateAverage(List<FootfallData> data) {
         Double restaurant = 0.0, fastFoodOutlet = 0.0, caterer = 0.0, other = 0.0;
 
         for (int i = 0; i < 5; i++) {
