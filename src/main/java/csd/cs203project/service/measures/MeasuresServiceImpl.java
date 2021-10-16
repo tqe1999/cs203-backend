@@ -3,7 +3,6 @@ package csd.cs203project.service.measures;
 import csd.cs203project.model.Measures;
 import csd.cs203project.model.User;
 import csd.cs203project.repository.measures.MeasuresRepository;
-import csd.cs203project.repository.user.UserRepository;
 import csd.cs203project.service.SES.SESService;
 import csd.cs203project.service.telegrambot.TelegramBotService;
 import csd.cs203project.service.user.UserService;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.Optional;
 
 @Service
 public class MeasuresServiceImpl implements MeasuresService {
@@ -35,10 +33,10 @@ public class MeasuresServiceImpl implements MeasuresService {
     }
 
     @Override
-    public void addMeasures(Measures measures) {
+    public Measures addMeasures(Measures measures) {
      
         Measures oldMeasures = findByTypeOfShop(measures.getTypeOfShop());
-
+        if (measures.getClosingTime().length() == 5) measures.setClosingTime(measures.getClosingTime()+":00");
         if (oldMeasures != null){
             List<String> changes = getChangeInMeasures(oldMeasures, measures);
             List<User> affectedUsers = userService.findByShopShopType(measures.getTypeOfShop());
@@ -48,10 +46,10 @@ public class MeasuresServiceImpl implements MeasuresService {
             if (changes.size() > 0) {
                 telegramBotService.sendUpdate(changes, affectedUsers);
                 //sesService.sendMessageEmailRequest("fake", "faker", affectedUserEmails);
-                measuresRepository.deleteByTypeOfShop(measures.getTypeOfShop());
-                measuresRepository.save(measures);
             }
         }
+        measuresRepository.deleteByTypeOfShop(measures.getTypeOfShop());
+        return measuresRepository.save(measures);
 
     }
 
@@ -109,4 +107,10 @@ public class MeasuresServiceImpl implements MeasuresService {
         }
         return changes;
     }
+
+    @Override
+    public List<Measures> findAllMeasures() {
+        return measuresRepository.findAll();
+    }
+
 }

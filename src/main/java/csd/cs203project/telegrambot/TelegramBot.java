@@ -24,9 +24,6 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     private UserRepository userRepository;
 
-    @Value("${telegramBotUsername")
-    private String botUsername;
-
     @Autowired
     public TelegramBot(UserRepository userRepository) {
         super();
@@ -38,7 +35,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     @Override
     public String getBotUsername() {
-        return botUsername;
+        return "SpringTestBot";
     }
 
     @Override

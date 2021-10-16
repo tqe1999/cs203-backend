@@ -13,4 +13,5 @@ public interface MeasuresRepository extends JpaRepository<Measures, Long> {
     List<Measures> findByTypeOfShop(String typeOfShop);
     @Transactional
     void deleteByTypeOfShop(String typeOfShop);
+
 }

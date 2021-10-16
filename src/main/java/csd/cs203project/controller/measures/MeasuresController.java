@@ -3,15 +3,9 @@ package csd.cs203project.controller.measures;
 import csd.cs203project.model.Measures;
 import csd.cs203project.service.measures.MeasuresService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import javax.validation.Valid;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -23,10 +17,16 @@ public class MeasuresController {
         this.measuresService = measuresService;
     }
 
+    @GetMapping("/measures")
+    public List<Measures> findAllMeasures() {
+        System.out.println("test");
+        return measuresService.findAllMeasures();
+    }
+
     @PostMapping("/measures")
-    public void addMeasures(@RequestBody Measures measures) {
+    public Measures addMeasures(@RequestBody Measures measures) {
         System.out.println(measures);
-        measuresService.addMeasures(measures);
+        return measuresService.addMeasures(measures);
     }
 
     @GetMapping("/measures/{shopType}")

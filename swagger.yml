@@ -1,0 +1,259 @@
+openapi: 3.0.1
+info:
+  title: CovFeed API
+  version: 1.0.0-oas3
+  
+servers:
+  - url: api.covfeed.link
+  
+paths:
+  /users:
+    post:
+      summary: create user
+      tags:
+      - users
+      operationId: addUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        "200":
+          description: OK
+          
+  /users/email/{email}:
+    get:
+      summary: get user by email
+      tags:
+      - users
+      operationId: getUser
+      parameters:
+      - name: email
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/User'
+    put:
+      summary: update user by email if exists
+      tags:
+      - users
+      operationId: updateUser
+      parameters:
+      - name: email
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/User'
+                
+  /users/{company}:
+    get:
+      summary: get users by company
+      tags:
+      - users
+      operationId: getUsersUnderCompany
+      parameters:
+      - name: company
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+  
+  /measures:
+    get:
+      summary: get all measures
+      tags:
+      - measures
+      operationId: findAllMeasures
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Measures'
+    post:
+      summary: update measures, send notification of changes
+      tags:
+      - measures
+      operationId: addMeasures
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Measures'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Measures'
+  /measures/{shopType}:
+    get:
+      summary: get measures by shop type
+      tags:
+      - measures
+      operationId: getMeasures
+      parameters:
+      - name: shopType
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Measures'
+                
+  /footfallData:
+    get:
+      summary: get footfall data
+      tags:
+      - footfall data
+      operationId: getJsonResponse
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    post:
+      summary: get new footfall data if changed
+      tags:
+      - footfall data
+      operationId: reloadFootfallData
+      responses:
+        "200":
+          description: OK
+
+  /health:
+    get:
+      summary: health check path for ELB
+      tags:
+      - health
+      operationId: getHealthCheck
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+                
+components:
+  schemas:
+    Shop:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        shopType:
+          type: string
+        area:
+          type: number
+          format: double
+        numTables:
+          type: integer
+          format: int32
+        sizeTables:
+          type: number
+          format: double
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        email:
+          type: string
+        userType:
+          type: string
+        vaccinationStatus:
+          type: string
+        swabTestResult:
+          type: string
+        fetStatus:
+          type: string
+        company:
+          type: string
+        telegramHandle:
+          type: string
+        telegramSignUpToken:
+          type: string
+        telegramChatId:
+          type: string
+        shop:
+          $ref: '#/components/schemas/Shop'
+    Measures:
+      required:
+      - typeOfShop
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        typeOfShop:
+          type: string
+        dineInSize:
+          type: integer
+          format: int32
+        maxGrpSizeVacc:
+          type: integer
+          format: int32
+        maxGrpSizeNonVacc:
+          type: integer
+          format: int32
+        socialDistance:
+          type: integer
+          format: int32
+        closingTime:
+          type: string
+        phase:
+          type: string

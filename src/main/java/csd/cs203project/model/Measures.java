@@ -25,7 +25,7 @@ public class Measures {
     private int maxGrpSizeVacc;
     private int maxGrpSizeNonVacc;
     private int socialDistance;
-    private Time closingTime;
+    private String closingTime;
     private String phase;
 
 }
